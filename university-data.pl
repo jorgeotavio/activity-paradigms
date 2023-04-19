@@ -46,3 +46,23 @@ professor_do_dia(Aluno, Dia, P) :- cursa(Aluno, C),
                                            grade(C, M),
                                            dia(Dia, M),
                                            ensina(M, P).
+
+alunos_curso(C, Alunos) :- cursa(Aluno, C),
+                            \+ member(Aluno, Alunos),
+                            alunos_curso(C, [Aluno | Alunos], Alunos).
+
+% usando o findall
+alunos_curso(C, Alunos) :- findall(X, cursa(X, C), Alunos).
+
+
+% usando recurssão
+alunos_curso_rec(C, Alunos) :-
+    alunos_curso_rec(C, [], Alunos).
+
+alunos_curso_rec(C, Acc, Alunos) :-
+    (cursa(X, C), \+ member(X, Acc)) ->
+        alunos_curso_rec(C, [X|Acc], Alunos)
+    ;
+        reverse(Acc, Alunos).
+
+
