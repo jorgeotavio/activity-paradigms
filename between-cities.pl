@@ -6,33 +6,36 @@ ligacao(custodia, arcoverde, br232, 80) .
 ligacao(riodejaneiro, riobonito, br101, 100) .
 ligacao(riobonito, cabofrio, br101, 120) .
 ligacao(cabofrio, buzios, br101, 40) .
+retornar(CO,CD,V,D) :- ligacao(CD,CO,V,D).
 
 % 1 - a
 conectadas(C1,C2) :- ligacao(C1, C2, _, _) .
-conectadas(C1,C2) :- ligacao(C1, C3, _, _),  conectadas(C3, C2).
+conectadas(C1,C2) :- ligacao(C1, C_T, _, _),  conectadas(C_T, C2).
+conectadas(C1,C2) :- ligacao(C2, C1, _, _) .
+conectadas(C1,C2) :- ligacao(C2, C_T, _, _),  conectadas(C_T, C1).
 
 % 2 - b
 distancia(C1, C2, D) :- ligacao(C1, C2, _, D).
-distancia(C1, C2, D) :- ligacao(C1, C3, _, D1),
-                        distancia(C3, C2, D2),
+distancia(C1, C2, D) :- ligacao(C1, C, _, D1),
+                        distancia(C, C2, D2),
+                        D is D1 + D2.
+distancia(C1, C2, D) :- ligacao(C2, C1, _, D).
+distancia(C1, C2, D) :- ligacao(C2, C, _, D1),
+                        distancia(C, C1, D2),
                         D is D1 + D2.
 
+
 % 2 - c
-caminho(C1, C2, W) :-
-    caminho(C1, C2, [C1], W).
+caminho(CO, CD, Caminho) :-
+    caminho_aux(CO, CD, [CO], CaminhoInverso),
+    reverse(CaminhoInverso, Caminho).
 
-caminho(C1, C2, Visitadas, [C1|Visitadas]) :-
-    ligacao(C1, C2, _, _),
-    write("Finalizando caminho em "),
-    write(C2),
-    nl.
-
-caminho(C1, C2, Visitadas, W) :-
-    ligacao(C1, Proxima, _, _),
-    \+ member(Proxima, Visitadas),
-    write("Indo de "),
-    write(C1),
-    write(" para "),
-    write(Proxima),
-    nl,
-    caminho(Proxima, C2, [Proxima|Visitadas], W).
+caminho_aux(CD, CD, Caminho, Caminho).
+caminho_aux(CT, CD, CaminhoPercorrido, Caminho) :-
+    ligacao(CT, ProximaCidade, _, _),
+    \+ member(ProximaCidade, CaminhoPercorrido),
+    caminho_aux(ProximaCidade, CD, [ProximaCidade|CaminhoPercorrido], Caminho).
+caminho_aux(CidadeAtual, CidadeDestino, CaminhoPercorrido, Caminho) :-
+    retornar(CidadeAtual, ProximaCidade, _, _),
+    \+ member(ProximaCidade, CaminhoPercorrido),
+    caminho_aux(ProximaCidade, CidadeDestino, [ProximaCidade|CaminhoPercorrido], Caminho).
