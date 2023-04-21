@@ -27,15 +27,15 @@ distancia(C1, C2, D) :- ligacao(C2, C, _, D1),
 
 % 2 - c
 caminho(CO, CD, Caminho) :-
-    caminho_aux(CO, CD, [CO], CaminhoInverso),
+    caminho2(CO, CD, [CO], CaminhoInverso),
     reverse(CaminhoInverso, Caminho).
 
-caminho_aux(CD, CD, Caminho, Caminho).
-caminho_aux(CT, CD, CaminhoPercorrido, Caminho) :-
+caminho2(CD, CD, Caminho, Caminho).
+caminho2(CT, CD, CaminhoPercorrido, Caminho) :-
     ligacao(CT, ProximaCidade, _, _),
     \+ member(ProximaCidade, CaminhoPercorrido),
-    caminho_aux(ProximaCidade, CD, [ProximaCidade|CaminhoPercorrido], Caminho).
-caminho_aux(CidadeAtual, CidadeDestino, CaminhoPercorrido, Caminho) :-
+    caminho2(ProximaCidade, CD, [ProximaCidade|CaminhoPercorrido], Caminho).
+caminho2(CidadeAtual, CidadeDestino, CaminhoPercorrido, Caminho) :-
     retornar(CidadeAtual, ProximaCidade, _, _),
     \+ member(ProximaCidade, CaminhoPercorrido),
-    caminho_aux(ProximaCidade, CidadeDestino, [ProximaCidade|CaminhoPercorrido], Caminho).
+    caminho2(ProximaCidade, CidadeDestino, [ProximaCidade|CaminhoPercorrido], Caminho).
